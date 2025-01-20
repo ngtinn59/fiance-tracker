@@ -44,5 +44,5 @@
 import constants from '~/constants';
 const { transactionViewOptions } = constants;
 
-const viewSelected = ref(transactionView[1])
+const viewSelected = ref(transactionViewOptions[1])
 </script>
