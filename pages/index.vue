@@ -41,6 +41,8 @@
   </template>
  
 <script setup>
-import { transactionViewOptions } from '~/constants';
+import constants from '~/constants';
+const { transactionViewOptions } = constants;
+
 const viewSelected = ref(transactionView[1])
 </script>
