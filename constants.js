@@ -1,1 +1,1 @@
-export const transactionView = ['Yearly', 'Monthly', 'Daily'];
+export const transactionViewOptions = ['Yearly', 'Monthly', 'Daily'];
