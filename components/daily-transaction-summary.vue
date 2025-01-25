@@ -1,54 +1,34 @@
 <template>
-    <div class="grid grid-cols-2 py-4 border-b drak:border-gray-800 text-gray-900 dark:text-gray-100">
+    <div class="grid grid-cols-2 py-4 border-b drak:border-gray-800 text-gray-500 dark:text-gray-400 font-bold">
         <!-- Left Section: Salary Info -->
         <div class="flex items-center justify-between">
-            <div class="flex items-center space-x-1">
-                <UIcon :name="icon" :class="iconColor" />
-                <div>{{ transaction.description }}</div>
-            </div>
-            <div>
-                <UBadge color="white" v-if="transaction.category">{{ transaction.category}}</UBadge>
-            </div>
+            {{ date }}
         </div>
 
         <!-- Right Section: Currency and Options -->
-        <div class="flex items-center justify-end space-x-2">
-            <div>{{ currency }}</div>
-            <div>
-                <UDropdown :items="items" :popper="{ placement: 'bottom-start' }">
-                    <UButton color="white" variant="ghost" trailing-icon="i-heroicons-ellipsis-horizontal"></UButton>
-                </UDropdown>
-            </div>
+        <div class="flex items-center justify-end mr-10">
+            {{ currency }}
         </div>
     </div>
 </template>
 
 <script setup>
 const props = defineProps({
-    transaction: Object
+    date: String,
+    transaction: Array
 });
-const isIncome = computed(() => {
-    return props.transaction.type === 'Income';
-})
-const icon = computed(() => isIncome.value ? 'i-heroicons:arrow-trending-up' : 'i-heroicons:arrow-trending-down');
 
-const iconColor = computed(() => isIncome.value ? 'text-green-600' : 'text-red-600');
-
-
-const { currency } = useCurrency(props.transaction.amount);
-const items = [
-    [
-        {
-            label: 'Edit',
-            icon: 'i-heroicons-pencil',
-            click: () => console.log('Edit')
-
-        },
-        {
-            label: 'Delete',
-            icon: 'i-heroicons-trash',
-            click: () => console.log('Delete')
+const sum = computed(() => {
+    let sum = 0;
+    for (const transaction of props.transaction) {
+        if(transaction.type === "Income") {
+            sum += transaction.amount;
+        } else {
+            sum -= transaction.amount;
         }
-    ]
-]
+    } 
+    return sum;   
+})
+
+const { currency } = useCurrency(sum);
 </script>
