@@ -22,14 +22,22 @@
       </div>
     </div>
     <div>
-      <UButton icon="i-heroicons-plus-circle" color="white" variant="sold" label="add">Add</UButton>
-      <UButton icon="i-heroicons-filter" color="white" variant="sold" label="filter">Filter</UButton>
+      <UModal v-model="isOpen">
+        <UCard>
+          <template #header>
+            <h2 class="text-xl font-bold">Add Transaction</h2>
+          </template>
+          <div>Hello</div>
+        </UCard>
+      </UModal>
+      <UButton icon="i-heroicons-plus-circle" color="white" variant="sold" label="add" @click="isOpen = true">Add</UButton>
     </div>
   </section>
-  <section v-if="!isLoading" >
+  <section v-if="!isLoading">
     <div v-for="(transactionsOnDay, date) in transactionsGrouped" :key="date" class="mb-10">
       <DailyTransactionSummary :date="date" :transaction="transactionsOnDay" />
-      <Transaction v-for="transaction in transactionsOnDay" :key="transaction.id" :transaction="transaction" @delete="refreshTransactions()"/>
+      <Transaction v-for="transaction in transactionsOnDay" :key="transaction.id" :transaction="transaction"
+        @delete="refreshTransactions()" />
     </div>
   </section>
   <section v-else class="flex items-center justify-center h-96">
@@ -49,7 +57,7 @@ const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 const supabase = createClient(supabaseUrl, supabaseKey);
 const transactions = ref([]);
 const isLoading = ref(false);
-
+const isOpen = ref(false);
 const income = computed(() => {
   return transactions.value.filter((transaction) => transaction.type === 'Income');
 })
