@@ -14,7 +14,18 @@
     <Trend color="green" title="Investments" :amount="4000" :last-amount="3000" :loading="isLoading" />
     <Trend color="red" title="Saving" :amount="4000" :last-amount="4100" :loading="isLoading" />
   </section>
-
+  <section class="flex justify-between mb-10">
+    <div>
+      <h2 class="text-2xl font-extrabold">Transactions</h2>
+      <div class="text-gray-500 dark:text-gray-400">
+        You have {{ incomeCount }} income and {{ expenseCount }} expenses this period.
+      </div>
+    </div>
+    <div>
+      <UButton icon="i-heroicons-plus-circle" color="white" variant="sold" label="add">Add</UButton>
+      <UButton icon="i-heroicons-filter" color="white" variant="sold" label="filter">Filter</UButton>
+    </div>
+  </section>
   <section v-if="!isLoading" >
     <div v-for="(transactionsOnDay, date) in transactionsGrouped" :key="date" class="mb-10">
       <DailyTransactionSummary :date="date" :transaction="transactionsOnDay" />
@@ -38,6 +49,34 @@ const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 const supabase = createClient(supabaseUrl, supabaseKey);
 const transactions = ref([]);
 const isLoading = ref(false);
+
+const income = computed(() => {
+  return transactions.value.filter((transaction) => transaction.type === 'Income');
+})
+
+const expense = computed(() => {
+  return transactions.value.filter((transaction) => transaction.type === 'Expense');
+})
+
+const incomeCount = computed(() => {
+  return income.value.length;
+})
+
+const expenseCount = computed(() => {
+  return expense.value.length;
+})
+
+const incomeTotal = computed(() => {
+  return income.value.reduce((acc, transaction) => acc + transaction.amount, 0);
+})
+
+const expenseTotal = computed(() => {
+  return expense.value.reduce((acc, transaction) => acc + transaction.amount, 0);
+})
+console.log(incomeTotal)
+
+console.log(expenseTotal)
+
 const fetchTransactions = async () => {
   try {
     isLoading.value = true;
