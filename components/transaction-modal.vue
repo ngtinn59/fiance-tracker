@@ -3,30 +3,32 @@
         <UCard>
             <template #header>
             </template>
-
-            <UFormGroup :required="true" label="Transaction Type" name="type" class="mb-4" >
-                <USelect placeholder="Transaction Type" :options="types"/>
-            </UFormGroup>
-
-
-            <UFormGroup label="Amount" :required="true" name="amount" class="mb-4" >
-                <UInput type="number" placeholder="amount"/>
-            </UFormGroup>
-
-            <UFormGroup label="Transaction date" :required="true" name="created_at" class="mb-4" >
-                <UInput type="date" icon="i-heroicons-calendar-days-20-solid"/>
-            </UFormGroup>
-
-            <UFormGroup label="Description" hint="Optional" name="description" class="mb-4" >
-                <UInput placeholder="Description"/>
-            </UFormGroup>
+            <UForm :state="state">
+                <UFormGroup :required="true" label="Transaction Type" name="type" class="mb-4">
+                    <USelect placeholder="Transaction Type" :options="types" v-model="state.type"/>
+                </UFormGroup>
 
 
-            <UFormGroup :required="true" label="Category" name="category" class="mb-4" >
-                <USelect placeholder="Category" :options="categories"/>
-            </UFormGroup>
+                <UFormGroup label="Amount" :required="true" name="amount" class="mb-4">
+                    <UInput type="number" placeholder="amount" v-model="state.amount"/>
+                </UFormGroup>
 
-            <UButton type="submit" color="black" variant="solid" label="Save">Save</UButton>
+                <UFormGroup label="Transaction date" :required="true" name="created_at" class="mb-4">
+                    <UInput type="date" icon="i-heroicons-calendar-days-20-solid" v-model="state.created_at" />
+                </UFormGroup>
+
+                <UFormGroup label="Description" hint="Optional" name="description" class="mb-4">
+                    <UInput placeholder="Description" v-model="state.description"/>
+                </UFormGroup>
+
+
+                <UFormGroup :required="true" label="Category" name="category" class="mb-4">
+                    <USelect placeholder="Category" :options="categories" v-model="state.category"/>
+                </UFormGroup>
+
+                <UButton type="submit" color="black" variant="solid" label="Save">Save</UButton>
+            </UForm>
+
         </UCard>
     </UModal>
 </template>
@@ -40,6 +42,13 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue']);
 
+const state = ref({
+    type: undefined,
+    amount: undefined,
+    created_at: undefined,
+    description: undefined,
+    category: undefined
+})
 const isOpen = computed({
     get: () => props.modelValue,
     set: (value) => emit('update:modelValue', value)
