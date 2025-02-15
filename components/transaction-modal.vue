@@ -27,7 +27,7 @@
                     <USelect placeholder="Category" :options="categories" v-model="state.category"/>
                 </UFormGroup>
 
-                <UButton type="submit" color="black" variant="solid" label="Save">Save</UButton>
+                <UButton type="submit" color="black" variant="solid" label="Save" :isLoading>Save</UButton>
             </UForm>
 
         </UCard>
@@ -41,7 +41,7 @@ const props = defineProps({
     modelValue: Boolean
 });
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue','saved']);
 const defaultSchema = z.object({
     type: z.string().nonempty(),
     amount: z.number().positive(),
@@ -74,18 +74,57 @@ const schema = z.intersection(
 
 const form = ref()
 
+const isLoading = ref(false)
+const supabase = useSupabaseClient()
+const toast = useToast()
 const save = async () => {
-    form.value.validate()
+    if (form.value.errors.length) {
+        return
+    }
+    isLoading.value = true
+    try {
+        const { error } = await supabase.from('transactions').upsert(state.value) // Không cần spread (...)
+        if(!error) {
+            toast.add({
+                title: 'Transaction saved',
+                icon: 'i-heroicons-check-circle',
+                color: 'green'
+            })
+            isOpen.value = false
+            emit('saved')
+        }
+    } catch (error) {
+        toast.add({
+            title: 'Error saving transaction',
+            description: error.message,
+            icon: 'i-heroicons-exclamation-circle',
+            color: 'red'
+        })
+    } finally {
+        isLoading.value = false
+    }
 }
-const state = ref({
+
+const initialState = {
     type: undefined,
     amount: 0,
     created_at: undefined,
     description: undefined,
     category: undefined
-})
+}
+const state = ref({...initialState})
+
+const resetForm = () => {
+    Object.assign(state.value,initialState)
+}
+
 const isOpen = computed({
     get: () => props.modelValue,
-    set: (value) => emit('update:modelValue', value)
+    set: (value) => {
+        if(!value) {
+            resetForm()
+        }
+        emit('update:modelValue', value)
+    }
 })
 </script>
